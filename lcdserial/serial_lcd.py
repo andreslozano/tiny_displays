@@ -16,37 +16,6 @@ COPYRIGHT = "Copyleft: This is a free work, you can copy, distribute, and modify
 URL = "http://hyperficiel.com"
 DESCRIPTION = "Seeedstudio grove serial lcd https://www.seeedstudio.com/Grove-Serial-LCD-p-773.html"
 
-# Initialization Commands or Responses
-SLCD_INIT = 0xA3
-SLCD_INIT_ACK = 0xA5
-SLCD_INIT_DONE = 0xAA
-
-# WorkingMode Commands or Responses
-SLCD_CONTROL_HEADER = 0x9F
-SLCD_CHAR_HEADER = 0xFE
-SLCD_CURSOR_HEADER = 0xFF
-SLCD_CURSOR_ACK = 0x5A
-
-SLCD_RETURN_HOME = 0x61
-SLCD_DISPLAY_OFF = 0x63
-SLCD_DISPLAY_ON = 0x64
-SLCD_CLEAR_DISPLAY = 0x65
-SLCD_CURSOR_OFF = 0x66
-SLCD_CURSOR_ON = 0x67
-SLCD_BLINK_OFF = 0x68
-SLCD_BLINK_ON = 0x69
-SLCD_SCROLL_LEFT = 0x6C
-SLCD_SCROLL_RIGHT = 0x72
-SLCD_NO_AUTO_SCROLL = 0x6A
-SLCD_AUTO_SCROLL = 0x6D
-SLCD_LEFT_TO_RIGHT = 0x70
-SLCD_RIGHT_TO_LEFT = 0x71
-SLCD_POWER_ON = 0x83
-SLCD_POWER_OFF = 0x82
-SLCD_INVALIDCOMMAND = 0x46
-SLCD_BACKLIGHT_ON = 0x81
-SLCD_BACKLIGHT_OFF = 0x80
-
 class SerialLCD:
 	def __init__(self, port=None, speed=9600):
 		"""
@@ -55,6 +24,37 @@ class SerialLCD:
 		list ports aviaibles (windows):
 		$ python -m serial.tools.list_ports
 		"""
+		# Initialization Commands or Responses
+		self.SLCD_INIT = 0xA3
+		self.SLCD_INIT_ACK = 0xA5
+		self.SLCD_INIT_DONE = 0xAA
+
+		# WorkingMode Commands or Responses
+		self.SLCD_CONTROL_HEADER = 0x9F
+		self.SLCD_CHAR_HEADER = 0xFE
+		self.SLCD_CURSOR_HEADER = 0xFF
+		self.SLCD_CURSOR_ACK = 0x5A
+
+		self.SLCD_RETURN_HOME = 0x61
+		self.SLCD_DISPLAY_OFF = 0x63
+		self.SLCD_DISPLAY_ON = 0x64
+		self.SLCD_CLEAR_DISPLAY = 0x65
+		self.SLCD_CURSOR_OFF = 0x66
+		self.SLCD_CURSOR_ON = 0x67
+		self.SLCD_BLINK_OFF = 0x68
+		self.SLCD_BLINK_ON = 0x69
+		self.SLCD_SCROLL_LEFT = 0x6C
+		self.SLCD_SCROLL_RIGHT = 0x72
+		self.SLCD_NO_AUTO_SCROLL = 0x6A
+		self.SLCD_AUTO_SCROLL = 0x6D
+		self.SLCD_LEFT_TO_RIGHT = 0x70
+		self.SLCD_RIGHT_TO_LEFT = 0x71
+		self.SLCD_POWER_ON = 0x83
+		self.SLCD_POWER_OFF = 0x82
+		self.SLCD_INVALIDCOMMAND = 0x46
+		self.SLCD_BACKLIGHT_ON = 0x81
+		self.SLCD_BACKLIGHT_OFF = 0x80
+
 		con, self.device = self.openPort(port=port, speed=speed)
 		
 		# show infos
@@ -62,14 +62,14 @@ class SerialLCD:
 		print self.device
 		
 		self.delay = 0.01 # 10 millis
-		self.write(SLCD_CONTROL_HEADER)	
-		self.write(SLCD_POWER_OFF) 
-		self.write(SLCD_CONTROL_HEADER)	
-		self.write(SLCD_POWER_ON)
-		self.write(SLCD_INIT_ACK)
+		self.write(self.SLCD_CONTROL_HEADER)	
+		self.write(self.SLCD_POWER_OFF) 
+		self.write(self.SLCD_CONTROL_HEADER)	
+		self.write(self.SLCD_POWER_ON)
+		self.write(self.SLCD_INIT_ACK)
 		while True:
 			r = self.device.read(1)
-			if r and ord(r) == SLCD_INIT_DONE:
+			if r and ord(r) == self.SLCD_INIT_DONE:
 				break
 		
 	# Sub function here to write data to serial
@@ -90,13 +90,13 @@ class SerialLCD:
 	# Print text/string into screen only ascii characters
 	def showText(self, text="", align=0):
 		if align:text = self.alignText(text, align)
-		self.write(SLCD_CHAR_HEADER)
+		self.write(self.SLCD_CHAR_HEADER)
 		self.write(text)
 		
 	# Typewriter style	
 	def typeWriter(self, text="", delay=0.1, align=0):
 		if align:text = self.alignText(text, align)
-		self.write(SLCD_CHAR_HEADER)
+		self.write(self.SLCD_CHAR_HEADER)
 		for c in text:
 			self.write(c)
 			time.sleep(delay)
@@ -121,13 +121,13 @@ class SerialLCD:
 			
 	# Clear screen
 	def clear(self):
-		self.write(SLCD_CONTROL_HEADER)	
-		self.write(SLCD_CLEAR_DISPLAY)	
+		self.write(self.SLCD_CONTROL_HEADER)	
+		self.write(self.SLCD_CLEAR_DISPLAY)	
 
 	# Return to home(top-left corner of LCD)
 	def home(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_RETURN_HOME)  
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_RETURN_HOME)  
 		time.sleep(self.delay * 2) # this command needs more time 
 		
 	# Reset clear & home
@@ -141,95 +141,95 @@ class SerialLCD:
 
 	# Set Cursor to (Column,Row) Position
 	def setCursor(self, row=0, col=0):
-		self.write(SLCD_CONTROL_HEADER) 
-		self.write(SLCD_CURSOR_HEADER) #cursor header command
+		self.write(self.SLCD_CONTROL_HEADER) 
+		self.write(self.SLCD_CURSOR_HEADER) #cursor header command
 		self.write(col)
 		self.write(row)
 
 	# Switch the display off without clearing RAM
 	def noDisplay(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_DISPLAY_OFF)	 
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_DISPLAY_OFF)	 
 
 	# Switch the display on
 	def display(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_DISPLAY_ON)	 
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_DISPLAY_ON)	 
 
 	# Switch the underline cursor off
 	def noCursor(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_CURSOR_OFF)	  
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_CURSOR_OFF)	  
 
 	# Switch the underline cursor on
 	def cursor(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_CURSOR_ON)	  
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_CURSOR_ON)	  
 
 	# Switch off the blinking cursor
 	def noBlink(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_BLINK_OFF)	  
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_BLINK_OFF)	  
 
 	# Switch on the blinking cursor
 	def blink(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_BLINK_ON)	  
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_BLINK_ON)	  
 
 	# Scroll the display left without changing the RAM
 	def scrollDisplayLeft(self, times=1, speed=0.05):
 		for i in xrange(times):
-			self.write(SLCD_CONTROL_HEADER)
-			self.write(SLCD_SCROLL_LEFT)
+			self.write(self.SLCD_CONTROL_HEADER)
+			self.write(self.SLCD_SCROLL_LEFT)
 			lcd.pause(speed)
 		
 
 	# Scroll the display right without changing the RAM
 	def scrollDisplayRight(self, times=1, speed=0.05):
 		for i in xrange(times):
-			self.write(SLCD_CONTROL_HEADER)
-			self.write(SLCD_SCROLL_RIGHT)
+			self.write(self.SLCD_CONTROL_HEADER)
+			self.write(self.SLCD_SCROLL_RIGHT)
 			lcd.pause(speed)
 
 	# Set the text flow "Left to Right"
 	def leftToRight(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_LEFT_TO_RIGHT)
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_LEFT_TO_RIGHT)
 
 	# Set the text flow "Right to Left"
 	def rightToLeft(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_RIGHT_TO_LEFT)
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_RIGHT_TO_LEFT)
 
 	# This will 'right justify' text from the cursor
 	def autoScroll(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_AUTO_SCROLL)
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_AUTO_SCROLL)
 
 	# This will 'left justify' text from the cursor
 	def noAutoScroll(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_NO_AUTO_SCROLL)
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_NO_AUTO_SCROLL)
 		
 	# SLCD power on
 	def power(self):
-		self.write(SLCD_CONTROL_HEADER)	
-		self.write(SLCD_POWER_ON)
+		self.write(self.SLCD_CONTROL_HEADER)	
+		self.write(self.SLCD_POWER_ON)
 		
 	# SLCD power off
 	def noPower(self):
-		self.write(SLCD_CONTROL_HEADER)	
-		self.write(SLCD_POWER_OFF)
+		self.write(self.SLCD_CONTROL_HEADER)	
+		self.write(self.SLCD_POWER_OFF)
 
 	# Turn off the backlight
 	def noBacklight(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_BACKLIGHT_OFF)
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_BACKLIGHT_OFF)
 		
 	# Turn on the back light
 	def backlight(self):
-		self.write(SLCD_CONTROL_HEADER)
-		self.write(SLCD_BACKLIGHT_ON)
+		self.write(self.SLCD_CONTROL_HEADER)
+		self.write(self.SLCD_BACKLIGHT_ON)
 			
 	# Search and find auto tty/com port if only one port is alive
 	def openPort(self, port=None, speed=9600):

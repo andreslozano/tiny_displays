@@ -15,32 +15,6 @@ COPYRIGHT = "Copyleft: This is a free work, you can copy, distribute, and modify
 URL = "http://hyperficiel.com"
 DESCRIPTION = "Seeedstudio oled display 96x96 SSD1327"
 
-OLED_Address = 0x3c # 7 bit address (will be left shifted to add the read write bit)
-OLED_Command_Mode = 0x80
-OLED_Data_Mode = 0x40
-OLED_Display_Off = 0xae
-OLED_Display_On = 0xaf
-OLED_Normal_Display = 0xa4
-OLED_Inverse_Display = 0xa7
-OLED_Activate_Scroll = 0x2f
-OLED_Desactivate_Scroll = 0x2e
-OLED_Set_Brightness = 0x81
-
-OLED_Scroll_Left = 0x26
-OLED_Scroll_Right = 0x27
-
-OLED_Scroll_2Frames = 0x7
-OLED_Scroll_3Frames = 0x4
-OLED_Scroll_4Frames = 0x5
-OLED_Scroll_5Frames = 0x0
-OLED_Scroll_25Frames = 0x6
-OLED_Scroll_64Frames = 0x1
-OLED_Scroll_128Frames = 0x2
-OLED_Scroll_256Frames = 0x3
-
-NULLBYTE = 0x00
-FFBYTE = 0xff
-
 class OledSSD1327:
 	def __init__(self, bus=None):
 		"""
@@ -52,6 +26,32 @@ class OledSSD1327:
 		after set to "on" : dtparam=i2c_arm=on
 		add line: dtparam=i2c1_baudrate=480000
 		"""
+		self.OLED_Address = 0x3c # 7 bit address (will be left shifted to add the read write bit)
+		self.OLED_Command_Mode = 0x80
+		self.OLED_Data_Mode = 0x40
+		self.OLED_Display_Off = 0xae
+		self.OLED_Display_On = 0xaf
+		self.OLED_Normal_Display = 0xa4
+		self.OLED_Inverse_Display = 0xa7
+		self.OLED_Activate_Scroll = 0x2f
+		self.OLED_Desactivate_Scroll = 0x2e
+		self.OLED_Set_Brightness = 0x81
+
+		self.OLED_Scroll_Left = 0x26
+		self.OLED_Scroll_Right = 0x27
+
+		self.OLED_Scroll_2Frames = 0x7
+		self.OLED_Scroll_3Frames = 0x4
+		self.OLED_Scroll_4Frames = 0x5
+		self.OLED_Scroll_5Frames = 0x0
+		self.OLED_Scroll_25Frames = 0x6
+		self.OLED_Scroll_64Frames = 0x1
+		self.OLED_Scroll_128Frames = 0x2
+		self.OLED_Scroll_256Frames = 0x3
+
+		self.NULLBYTE = 0x00
+		self.FFBYTE = 0xff
+
 		self.bus = bus
 		
 		self.grayH = 0xf0
@@ -198,23 +198,23 @@ class OledSSD1327:
 		endCol = (endCol * 4) + 3
 		speed = str(speed)
 		speedList = {
-			"2":OLED_Scroll_2Frames, "3":OLED_Scroll_3Frames, "4":OLED_Scroll_4Frames, 
-			"5":OLED_Scroll_5Frames, "25":OLED_Scroll_25Frames, "64":OLED_Scroll_64Frames, 
-			"128":OLED_Scroll_128Frames, "256":OLED_Scroll_256Frames
+			"2":self.OLED_Scroll_2Frames, "3":self.OLED_Scroll_3Frames, "4":self.OLED_Scroll_4Frames, 
+			"5":self.OLED_Scroll_5Frames, "25":self.OLED_Scroll_25Frames, "64":self.OLED_Scroll_64Frames, 
+			"128":self.OLED_Scroll_128Frames, "256":self.OLED_Scroll_256Frames
 		}
 		if speed in speedList.keys():
 			if to == "left": # go to the left
-				self.writeCommand([OLED_Scroll_Left , NULLBYTE, startRow, speedList[speed], endRow, startCol+8, endCol+8, NULLBYTE])	
+				self.writeCommand([self.OLED_Scroll_Left , self.NULLBYTE, startRow, speedList[speed], endRow, startCol+8, endCol+8, self.NULLBYTE])	
 			else:    # go to the right
-				self.writeCommand([OLED_Scroll_Right, NULLBYTE, startRow, speedList[speed], endRow, startCol+8, endCol+8, NULLBYTE])
+				self.writeCommand([self.OLED_Scroll_Right, self.NULLBYTE, startRow, speedList[speed], endRow, startCol+8, endCol+8, self.NULLBYTE])
 		else:
 			print "error speed",speed
 			
 	def activeScroll(self):
-		self.writeCommand(OLED_Activate_Scroll)
+		self.writeCommand(self.OLED_Activate_Scroll)
 			
 	def desactiveScroll(self):
-		self.writeCommand(OLED_Desactivate_Scroll)
+		self.writeCommand(self.OLED_Desactivate_Scroll)
 		
 	def setBrightness(self, value=0):
 		# values 0 - 15
@@ -222,10 +222,10 @@ class OledSSD1327:
 		self.grayL =  value & 0x0F
 		
 	def inverseDisplay(self):
-		self.writeCommand(OLED_Inverse_Display) # set inverse Display
+		self.writeCommand(self.OLED_Inverse_Display) # set inverse Display
 		
 	def normalDisplay(self):
-		self.writeCommand(OLED_Normal_Display) # set Normal Display (default)
+		self.writeCommand(self.OLED_Normal_Display) # set Normal Display (default)
 		
 	def setPageMode(self):
 		self.writeCommand(0xA0)	# remap to
@@ -248,16 +248,16 @@ class OledSSD1327:
 	# sub functions			
 	def writeData(self, dat=None):
 		if type(dat).__name__ == "list" and len(dat) <= 32:
-			self.bus.write_i2c_block_data(OLED_Address, OLED_Data_Mode, dat)
+			self.bus.write_i2c_block_data(self.OLED_Address, self.OLED_Data_Mode, dat)
 		elif type(dat).__name__ == "int":
-			self.bus.write_byte_data(OLED_Address, OLED_Data_Mode, dat)
+			self.bus.write_byte_data(self.OLED_Address, self.OLED_Data_Mode, dat)
 
 	def writeCommand(self, cmd=None):
 		if type(cmd).__name__ == "list":
 			for byte in cmd:
-				self.bus.write_byte_data(OLED_Address, OLED_Command_Mode, byte)
+				self.bus.write_byte_data(self.OLED_Address, self.OLED_Command_Mode, byte)
 		elif type(cmd).__name__ == "int":
-			self.bus.write_byte_data(OLED_Address, OLED_Command_Mode, cmd)
+			self.bus.write_byte_data(self.OLED_Address, self.OLED_Command_Mode, cmd)
 			
 	def getPageFromPixels(self, pixels=None):
 		"""

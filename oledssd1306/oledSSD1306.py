@@ -10,28 +10,28 @@ from Adafruit_SSD1306 import SSD1306_128_64
 # he navegado en cien mares, 
 # y atracado en cien riberas. 
 
-OLED_Normal_Display = 0xa6
-OLED_Inverse_Display = 0xa7
-OLED_Activate_Scroll = 0x2f
-OLED_Desactivate_Scroll = 0x2e
-OLED_Scroll_Left = 0x27
-OLED_Scroll_Right = 0x26
-
-OLED_Scroll_2Frames = 0x7
-OLED_Scroll_3Frames = 0x4
-OLED_Scroll_4Frames = 0x5
-OLED_Scroll_5Frames = 0x0
-OLED_Scroll_25Frames = 0x6
-OLED_Scroll_64Frames = 0x1
-OLED_Scroll_128Frames = 0x2
-OLED_Scroll_256Frames = 0x3
-
-NULLBYTE = 0x00
-FFBYTE = 0xff
-
 class OledSSD1306(SSD1306_128_64):
 	def __init__(self, rst=None, dc=None, spi=None):
 		SSD1306_128_64.__init__(self, rst=rst, dc=dc, spi=spi)
+		self.OLED_Normal_Display = 0xa6
+		self.OLED_Inverse_Display = 0xa7
+		self.OLED_Activate_Scroll = 0x2f
+		self.OLED_Desactivate_Scroll = 0x2e
+		self.OLED_Scroll_Left = 0x27
+		self.OLED_Scroll_Right = 0x26
+
+		self.OLED_Scroll_2Frames = 0x7
+		self.OLED_Scroll_3Frames = 0x4
+		self.OLED_Scroll_4Frames = 0x5
+		self.OLED_Scroll_5Frames = 0x0
+		self.OLED_Scroll_25Frames = 0x6
+		self.OLED_Scroll_64Frames = 0x1
+		self.OLED_Scroll_128Frames = 0x2
+		self.OLED_Scroll_256Frames = 0x3
+
+		self.NULLBYTE = 0x00
+		self.FFBYTE = 0xff
+		
 		self.row = 0
 		self.col = 0
 		self.ascii = self.getAscii()
@@ -99,30 +99,30 @@ class OledSSD1306(SSD1306_128_64):
 		# speed: 2 frames is the fastest, 256 frames is the slowest
 		speed = str(speed)
 		speedList = {
-			"2":OLED_Scroll_2Frames, "3":OLED_Scroll_3Frames, "4":OLED_Scroll_4Frames, 
-			"5":OLED_Scroll_5Frames, "25":OLED_Scroll_25Frames, "64":OLED_Scroll_64Frames, 
-			"128":OLED_Scroll_128Frames, "256":OLED_Scroll_256Frames
+			"2":self.OLED_Scroll_2Frames, "3":self.OLED_Scroll_3Frames, "4":self.OLED_Scroll_4Frames, 
+			"5":self.OLED_Scroll_5Frames, "25":self.OLED_Scroll_25Frames, "64":self.OLED_Scroll_64Frames, 
+			"128":self.OLED_Scroll_128Frames, "256":self.OLED_Scroll_256Frames
 		}
 		if speed in speedList.keys():
 			if to == "left": # from the left to right
-				self.writeCommand([OLED_Scroll_Left, NULLBYTE, start, speedList[speed], end, NULLBYTE, FFBYTE])
+				self.writeCommand([self.OLED_Scroll_Left, self.NULLBYTE, start, speedList[speed], end, self.NULLBYTE, self.FFBYTE])
 			else:    # go to the right
-				self.writeCommand([OLED_Scroll_Right, NULLBYTE, start, speedList[speed], end, NULLBYTE, FFBYTE])
+				self.writeCommand([self.OLED_Scroll_Right, self.NULLBYTE, start, speedList[speed], end, self.NULLBYTE, self.FFBYTE])
 			
 	def activeScroll(self):
-		self.writeCommand(OLED_Activate_Scroll)
+		self.writeCommand(self.OLED_Activate_Scroll)
 			
 	def desactiveScroll(self):
-		self.writeCommand(OLED_Desactivate_Scroll)
+		self.writeCommand(self.OLED_Desactivate_Scroll)
 		
 	def setBrightness(self, value=0):
 		self.set_contrast(value)
 		
 	def inverseDisplay(self):
-		self.writeCommand(OLED_Inverse_Display) # set inverse Display
+		self.writeCommand(self.OLED_Inverse_Display) # set inverse Display
 		
 	def normalDisplay(self):
-		self.writeCommand(OLED_Normal_Display) # set Normal Display (default)
+		self.writeCommand(self.OLED_Normal_Display) # set Normal Display (default)
 
 	def setHorizontalMode(self):
 		self.writeCommand(None)
