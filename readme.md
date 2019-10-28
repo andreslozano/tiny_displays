@@ -1,4 +1,4 @@
-# Screens devices
+# Tiny Displays
 
 ## Python code
 

@@ -158,7 +158,9 @@ class RgbLcd:
 		self.setRGB(rgb=(0,64,0)) # few green
 		
 	def showSpecialChars(self, chars=[0]):
-		if type(chars).__name__ == "int":
+		# the chars value can be a single or multiple (array) char location
+		if type(chars).__name__ == "int": 
+			# single char
 			chars = [chars]
 			
 		if max(chars) > 7:
@@ -220,24 +222,6 @@ class RgbLcd:
 if __name__=="__main__":
 	print "you are in class RgbLcd"
 	
-	toi_mon_toi = [
-		"Prends un petit poisson",
-		"Glisse-le entre mes jambes",
-		"Il n'y a pas de raison",
-		"Pour se tirer la langue"
-	]
-	
-	char0 = [ # char description every "0" = black pixel
-		0, 0, 0, 0, 0,
-		1, 0, 0, 0, 1,
-		1, 1, 0, 1, 1,
-		0, 1, 1, 0, 0,
-		0, 1, 1, 0, 0,
-		1, 1, 0, 1, 1,
-		1, 0, 0, 0, 1,
-		0, 0, 0, 0, 0,
-	]
-	
 	delay = 1
 	
 	bus = smbus.SMBus(1) # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
@@ -245,8 +229,15 @@ if __name__=="__main__":
 	lcd.clear()
 	
 	try:
+		toi_mon_toi = [
+			"Prends un petit poisson",
+			"Glisse-le entre mes jambes",
+			"Il n'y a pas de raison",
+			"Pour se tirer la langue"
+		]
 		while True:
 			lcd.backlight()
+			
 			for line in toi_mon_toi:
 				line = line.upper()
 				row = 1
@@ -270,8 +261,20 @@ if __name__=="__main__":
 			lcd.clear()
 			
 			# specials chars test
-			lcd.createChar(pattern=char0)
+			specialChar = [ # char description every "0" = black pixel
+				0, 0, 0, 0, 0,
+				1, 0, 0, 0, 1,
+				1, 1, 0, 1, 1,
+				0, 1, 1, 0, 0,
+				0, 1, 1, 0, 0,
+				1, 1, 0, 1, 1,
+				1, 0, 0, 0, 1,
+				0, 0, 0, 0, 0,
+			]
+			# put special char in location 0 or index 0 of (0-7)
+			lcd.createChar(location=0, pattern=specialChar)
 			lcd.setCursor(row=0)
+			# put 16 special chars of location 0
 			lcd.showSpecialChars([0]*16)
 			lcd.pause(delay)
 			lcd.setCursor(row=1)
